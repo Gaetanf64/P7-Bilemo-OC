@@ -1,0 +1,88 @@
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/products": {
+            "get": {
+                "summary": "Liste des produits",
+                "operationId": "2d4d6e47a3073543b52806d69bc60570",
+                "parameters": [
+                    {
+                        "name": "liste",
+                        "in": "query",
+                        "description": "Le nombre de produits à récupérer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des produits",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "summary": "Détail d'un produit",
+                "operationId": "1cf77d4e079e193e161f2e4fca2e53a9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du produit",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détail d'un produit",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Product": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
