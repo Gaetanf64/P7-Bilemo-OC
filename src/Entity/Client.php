@@ -8,9 +8,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
+ * @OA\Schema()
  */
 class Client implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -18,37 +20,45 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @OA\Property(type="integer")
+     * 
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @OA\Property(type="string")
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
+     * @OA\Property(type="json")
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @OA\Property(type="string")
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @OA\Property(type="string")
      */
     private $username;
 
     /**
      * @ORM\Column(type="datetime")
+     * @OA\Property(type="datetime")
      */
     private $date_creation;
 
     /**
      * @ORM\Column(type="datetime")
+     * @OA\Property(type="datetime")
      */
     private $date_update;
 

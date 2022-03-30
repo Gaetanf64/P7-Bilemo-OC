@@ -1,13 +1,24 @@
 {
     "openapi": "3.0.0",
+    "info": {
+        "title": "Swagger Bilemo",
+        "description": "This is the Bilemo server.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api/",
+            "description": "Api BileMo"
+        }
+    ],
     "paths": {
         "/products": {
             "get": {
                 "summary": "Liste des produits",
-                "operationId": "2d4d6e47a3073543b52806d69bc60570",
+                "operationId": "66ae5815a7406e5f3fea8e33147a7c14",
                 "parameters": [
                     {
-                        "name": "liste",
+                        "name": "liste des produits",
                         "in": "query",
                         "description": "Le nombre de produits à récupérer",
                         "required": false,
@@ -29,8 +40,19 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "401": {
+                        "description": "JWT not found or expired"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "scalar": "bearer"
+                    }
+                ]
             }
         },
         "/products/{id}": {
@@ -58,6 +80,163 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "401": {
+                        "description": "JWT not found or expired"
+                    }
+                }
+            }
+        },
+        "/login_check": {
+            "post": {
+                "tags": [
+                    "Authenticate"
+                ],
+                "summary": "Envoi un JWT token",
+                "operationId": "9056e654130817d5830fe3912b502e81",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "username": {
+                                        "description": "username du client",
+                                        "type": "string",
+                                        "example": "votrePseudo"
+                                    },
+                                    "password": {
+                                        "description": "Password du client",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "votrePassword"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Authentication",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Client"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "summary": "Liste des users",
+                "operationId": "ecacd08f0e93e46426834152fe77b072",
+                "parameters": [
+                    {
+                        "name": "liste des users",
+                        "in": "query",
+                        "description": "Le nombre de users",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des users",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "401": {
+                        "description": "JWT not found or expired"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Créer un user",
+                "operationId": "f16746d02f8019ff08b5449dee239ead",
+                "parameters": [
+                    {
+                        "name": "addUser",
+                        "in": "query",
+                        "description": "Add User",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "request": "AddUser",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Creation user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "401": {
+                        "description": "JWT not found or expired"
                     }
                 }
             }
@@ -65,6 +244,35 @@
     },
     "components": {
         "schemas": {
+            "Client": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "roles": {
+                        "type": "json"
+                    },
+                    "password": {
+                        "description": "The hashed password",
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "date_creation": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "date_update": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "Product": {
                 "properties": {
                     "id": {
@@ -79,6 +287,35 @@
                     },
                     "name": {
                         "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "roles": {
+                        "type": "json"
+                    },
+                    "password": {
+                        "description": "The hashed password",
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "date_creation": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "date_update": {
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
