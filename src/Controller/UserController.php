@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 class UserController extends AbstractController
 {
@@ -14,10 +15,12 @@ class UserController extends AbstractController
      * 
      * @OA\Get(
      *      path="/users",
+     *      tags={"Users"},
+     *      security={"bearer"},
      *      @OA\Parameter(
-     *          name="liste des users",
+     *          name="page",
      *          in="query",
-     *          description="Le nombre de users",
+     *          description="Le numéro de la page à récupérer",
      *          required=false,
      *          @OA\Schema(type="integer")
      *      ),
@@ -45,25 +48,62 @@ class UserController extends AbstractController
     }
 
     /**
+     * Détail d'un user
+     * 
+     * @Rest\Get(path="/api/users/{id}", name="api_user_details")
+     * @Rest\View(statusCode= 200)
+     * @OA\Get(
+     *      path="/users/{id}",
+     *      security={"bearer"},
+     *      tags={"Users"},
+     *      @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          description="ID du user",
+     *          required=true,
+     *          @OA\Schema(type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response="200",
+     *          description="Détail d'un user",
+     *          @OA\JsonContent(ref="#/components/schemas/User"),
+     *      ),
+     *      @OA\Response(
+     *          response="404",
+     *          description="Not found",
+     *      ),
+     *      @OA\Response(
+     *          response="401",
+     *          description="JWT not found or expired",
+     *      ),
+     * )
+     */
+    public function details(): Response
+    {
+        return $this->json([
+            'message' => 'Welcome to your new controller!',
+            'path' => 'src/Controller/ProductController.php',
+        ]);
+    }
+
+    /**
      * Créer un user
      * 
      * @OA\Post(
      *      path="/users",
-     *      @OA\Parameter(
-     *          name="addUser",
-     *          in="query",
-     *          description="Add User",
-     *          required=false,
-     *          @OA\Schema(type="integer")
-     *      ),
+     *      tags={"Users"},
+     *      security={"bearer"},
      *      @OA\RequestBody(
      *          request="AddUser",
      *          required=true,
-     *          @OA\JsonContent(
-     *              required={"username", "email", "password"},
-     *              @OA\Property(type="string", property="username"),
-     *              @OA\Property(type="string", property="email"),
-     *              @OA\Property(type="string", property="password"),
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(
+     *                  required={"username", "email", "password"},
+     *                  @OA\Property(type="string", property="username"),
+     *                  @OA\Property(type="string", property="email"),
+     *                  @OA\Property(type="string", property="password")
+     *              )
      *          )
      *      ),
      *      @OA\Response(

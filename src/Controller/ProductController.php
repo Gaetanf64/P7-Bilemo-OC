@@ -7,10 +7,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
+use JMS\Serializer\SerializerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
 class ProductController extends AbstractController
 {
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    public function  __construct(SerializerInterface $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
     /**
      * Liste des produits
      * 
@@ -21,11 +32,12 @@ class ProductController extends AbstractController
      * @Rest\View(statusCode= 200),
      * @OA\Get(
      *      path="/products",
+     *      tags={"Products"},
      *      security={"bearer"},
      *      @OA\Parameter(
-     *          name="liste des produits",
+     *          name="page",
      *          in="query",
-     *          description="Le nombre de produits à récupérer",
+     *          description="Le numéro de la page à récupérer",
      *          required=false,
      *          @OA\Schema(type="integer")
      *      ),
@@ -48,14 +60,21 @@ class ProductController extends AbstractController
     {
         $products = $productRepository->findAll();
 
-        return $products;
+        $json = $this->serializer->serialize($products, 'json');
+        $response = new Response($json, 200, [], true);
+
+        return $response;
     }
 
     /**
      * Détail d'un produit
      * 
+     * @Rest\Get(path="/api/products/{id}", name="api_product_details")
+     * @Rest\View(statusCode= 200)
      * @OA\Get(
      *      path="/products/{id}",
+     *      security={"bearer"},
+     *      tags={"Products"},
      *      @OA\Parameter(
      *          name="id",
      *          in="path",

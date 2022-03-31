@@ -1,29 +1,26 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "API BileMo",
+        "title": "Swagger Bilemo",
         "description": "Serveur BileMo",
         "version": "1.0.0"
     },
     "servers": [
         {
             "url": "http://localhost:8000/api/",
-            "description": "API BileMo"
+            "description": "Api BileMo"
         }
     ],
     "paths": {
         "/products": {
             "get": {
-                "tags": [
-                    "Products"
-                ],
                 "summary": "Liste des produits",
                 "operationId": "66ae5815a7406e5f3fea8e33147a7c14",
                 "parameters": [
                     {
-                        "name": "page",
+                        "name": "liste des produits",
                         "in": "query",
-                        "description": "Le numéro de la page à récupérer",
+                        "description": "Le nombre de produits à récupérer",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -60,9 +57,6 @@
         },
         "/products/{id}": {
             "get": {
-                "tags": [
-                    "Products"
-                ],
                 "summary": "Détail d'un produit",
                 "operationId": "1cf77d4e079e193e161f2e4fca2e53a9",
                 "parameters": [
@@ -93,12 +87,7 @@
                     "401": {
                         "description": "JWT not found or expired"
                     }
-                },
-                "security": [
-                    {
-                        "bearer": []
-                    }
-                ]
+                }
             }
         },
         "/login_check": {
@@ -153,16 +142,13 @@
         },
         "/users": {
             "get": {
-                "tags": [
-                    "Users"
-                ],
                 "summary": "Liste des users",
                 "operationId": "ecacd08f0e93e46426834152fe77b072",
                 "parameters": [
                     {
-                        "name": "page",
+                        "name": "liste des users",
                         "in": "query",
-                        "description": "Le numéro de la page à récupérer",
+                        "description": "Le nombre de users",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -189,19 +175,22 @@
                     "401": {
                         "description": "JWT not found or expired"
                     }
-                },
-                "security": [
-                    {
-                        "bearer": []
-                    }
-                ]
+                }
             },
             "post": {
-                "tags": [
-                    "Users"
-                ],
                 "summary": "Créer un user",
                 "operationId": "f16746d02f8019ff08b5449dee239ead",
+                "parameters": [
+                    {
+                        "name": "addUser",
+                        "in": "query",
+                        "description": "Add User",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "request": "AddUser",
                     "required": true,
@@ -249,55 +238,7 @@
                     "401": {
                         "description": "JWT not found or expired"
                     }
-                },
-                "security": [
-                    {
-                        "bearer": []
-                    }
-                ]
-            }
-        },
-        "/users/{id}": {
-            "get": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Détail d'un user",
-                "operationId": "94f057e1773af987e75affc62cb6bff8",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID du user",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Détail d'un user",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not found"
-                    },
-                    "401": {
-                        "description": "JWT not found or expired"
-                    }
-                },
-                "security": [
-                    {
-                        "bearer": []
-                    }
-                ]
+                }
             }
         }
     },

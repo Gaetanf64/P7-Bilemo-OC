@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 class SecurityController extends AbstractController
 {
