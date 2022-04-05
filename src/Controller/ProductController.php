@@ -56,7 +56,7 @@ class ProductController extends AbstractController
      *      ),
      * )
      */
-    public function liste(ProductRepository $productRepository): Response
+    public function list(ProductRepository $productRepository): Response
     {
         $products = $productRepository->findAll();
 
@@ -97,11 +97,13 @@ class ProductController extends AbstractController
      *      ),
      * )
      */
-    public function details(): Response
+    public function show($id, ProductRepository $productRepository): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ProductController.php',
-        ]);
+        $product = $productRepository->findById($id);
+
+        $json = $this->serializer->serialize($product, 'json');
+        $response = new Response($json, 200, [], true);
+
+        return $response;
     }
 }

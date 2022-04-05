@@ -12,6 +12,56 @@
         }
     ],
     "paths": {
+        "/login_check": {
+            "post": {
+                "tags": [
+                    "Authenticate"
+                ],
+                "summary": "Envoi un JWT token",
+                "operationId": "9056e654130817d5830fe3912b502e81",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "username": {
+                                        "description": "username du client",
+                                        "type": "string",
+                                        "example": "votrePseudo"
+                                    },
+                                    "password": {
+                                        "description": "Password du client",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "votrePassword"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Authentication",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Client"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        },
         "/products": {
             "get": {
                 "tags": [
@@ -101,63 +151,13 @@
                 ]
             }
         },
-        "/login_check": {
-            "post": {
-                "tags": [
-                    "Authenticate"
-                ],
-                "summary": "Envoi un JWT token",
-                "operationId": "9056e654130817d5830fe3912b502e81",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "username": {
-                                        "description": "username du client",
-                                        "type": "string",
-                                        "example": "votrePseudo"
-                                    },
-                                    "password": {
-                                        "description": "Password du client",
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "votrePassword"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Authentication",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Client"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not found"
-                    },
-                    "401": {
-                        "description": "Invalid credentials"
-                    }
-                }
-            }
-        },
         "/users": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Liste des users",
-                "operationId": "ecacd08f0e93e46426834152fe77b072",
+                "operationId": "c7e4897e26d4d8d62b2e3d8c6bf3e53c",
                 "parameters": [
                     {
                         "name": "page",
@@ -263,7 +263,7 @@
                     "Users"
                 ],
                 "summary": "Détail d'un user",
-                "operationId": "94f057e1773af987e75affc62cb6bff8",
+                "operationId": "750fe8d308ad6fa2328bf19c00004af6",
                 "parameters": [
                     {
                         "name": "id",
@@ -285,6 +285,40 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "401": {
+                        "description": "JWT not found or expired"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Effacer un user",
+                "operationId": "8b476306d78082d28f66738db9b1b843",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Delete User"
                     },
                     "404": {
                         "description": "Not found"
