@@ -7,10 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use OpenApi\Annotations as OA;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @OA\Schema()
+ * 
+ * @Serializer\ExclusionPolicy("ALL")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -19,12 +22,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @OA\Property(type="integer")
+     * @Serializer\Expose
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @OA\Property(type="string")
+     * @Serializer\Expose
      */
     private $email;
 
@@ -38,12 +43,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      * @ORM\Column(type="string")
      * @OA\Property(type="string")
+     * @Serializer\Expose
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=50)
      * @OA\Property(type="string")
+     * @Serializer\Expose
      */
     private $username;
 

@@ -5,10 +5,15 @@ namespace App\Controller;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
 use JMS\Serializer\SerializerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class ProductController extends AbstractController
 {
@@ -56,14 +61,27 @@ class ProductController extends AbstractController
      *      ),
      * )
      */
-    public function list(ProductRepository $productRepository): Response
+    public function list(ProductRepository $productRepository, Request $request, PaginatorInterface $paginator, TagAwareCacheInterface $cache): Response
     {
-        $products = $productRepository->findAll();
+        $page = $request->query->getInt("page", 1);
 
-        $json = $this->serializer->serialize($products, 'json');
-        $response = new Response($json, 200, [], true);
+        //Use cache
+        $productsCache = $cache->get("products" . $page, function (ItemInterface $item) use ($page, $paginator, $productRepository) {
+            $item->expiresAfter(3600);
+            $item->tag('product');
 
-        return $response;
+
+            $products = $productRepository->findAll();
+
+            $productsPaginator = $paginator->paginate($products, $page, 6);
+
+            $json = $this->serializer->serialize($productsPaginator, 'json');
+            $response = new Response($json, 200, [], true);
+
+            return $response;
+        });
+
+        return $productsCache;
     }
 
     /**
@@ -97,13 +115,20 @@ class ProductController extends AbstractController
      *      ),
      * )
      */
-    public function show($id, ProductRepository $productRepository): Response
+    public function show($id, ProductRepository $productRepository, TagAwareCacheInterface $cache): Response
     {
-        $product = $productRepository->findById($id);
+        //Use cache
+        $productCache = $cache->get("product" . $id, function (ItemInterface $item) use ($id, $productRepository) {
+            $item->expiresAfter(3600);
 
-        $json = $this->serializer->serialize($product, 'json');
-        $response = new Response($json, 200, [], true);
+            $product = $productRepository->findOneById($id);
 
-        return $response;
+            $json = $this->serializer->serialize($product, 'json');
+            $response = new Response($json, 200, [], true);
+
+            return $response;
+        });
+
+        return $productCache;
     }
 }

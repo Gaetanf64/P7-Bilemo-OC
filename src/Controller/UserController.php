@@ -15,6 +15,10 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class UserController extends AbstractController
 {
@@ -62,17 +66,29 @@ class UserController extends AbstractController
      *      ),
      * )
      */
-    public function list(UserRepository $userRepository): Response
+    public function list(UserRepository $userRepository, Request $request, PaginatorInterface $paginator, TagAwareCacheInterface $cache): Response
     {
-        $client = $this->getUser();
-        $idClient = $client->getId();
+        $page = $request->query->getInt('page', 1);
 
-        $users = $userRepository->findByClient($idClient);
+        //Use cache
+        $usersCache = $cache->get("users" . $page, function (ItemInterface $item) use ($page, $paginator, $userRepository) {
+            $item->expiresAfter(3600);
+            $item->tag('user');
 
-        $json = $this->serializer->serialize($users, 'json');
-        $response = new Response($json, 200, [], true);
+            $client = $this->getUser();
+            $idClient = $client->getId();
 
-        return $response;
+            $users = $userRepository->findByClient($idClient);
+
+            $usersPaginator = $paginator->paginate($users, $page, 2);
+
+            $json = $this->serializer->serialize($usersPaginator, 'json');
+            $response = new Response($json, 200, [], true);
+
+            return $response;
+        });
+
+        return $usersCache;
     }
 
     /**
@@ -106,21 +122,29 @@ class UserController extends AbstractController
      *      ),
      * )
      */
-    public function show($id, UserRepository $userRepository): Response
+    public function show($id, UserRepository $userRepository, TagAwareCacheInterface $cache): Response
     {
-        $idClient = $this->getUser()->getId();
 
-        $user = $userRepository->find($id);
-        $userClient = $user->getClient()->getId();
+        //Use cache
+        $userCache = $cache->get("user" . $id, function (ItemInterface $item) use ($id, $userRepository) {
+            $item->expiresAfter(3600);
 
-        if ($userClient === $idClient) {
-            $json = $this->serializer->serialize($user, 'json');
-            $response = new Response($json, 200, [], true);
+            $idClient = $this->getUser()->getId();
 
-            return $response;
-        } else {
-            throw new HttpException(403, "You cannot access this user from another client");
-        }
+            $user = $userRepository->findOneById($id);
+            $userClient = $user->getClient()->getId();
+
+            if ($userClient === $idClient) {
+                $json = $this->serializer->serialize($user, 'json');
+                $response = new Response($json, 200, [], true);
+
+                return $response;
+            } else {
+                throw new HttpException(403, "You cannot access this user from another client");
+            }
+        });
+
+        return $userCache;
     }
 
     /**
@@ -226,7 +250,7 @@ class UserController extends AbstractController
             $manager->remove($user);
             $manager->flush();
 
-            return new Response("User deleted");
+            return new Response("User deleted", 204);
         } else {
             throw new HttpException(403, "You cannot access this user from another client");
         }
