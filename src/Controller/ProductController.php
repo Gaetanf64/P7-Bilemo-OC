@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Annotations as OA;
 use JMS\Serializer\SerializerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -123,10 +124,15 @@ class ProductController extends AbstractController
 
             $product = $productRepository->findOneById($id);
 
-            $json = $this->serializer->serialize($product, 'json');
-            $response = new Response($json, 200, [], true);
+            if ($product == null) {
+                throw new HttpException(404, "Not found");
+            } else {
 
-            return $response;
+                $json = $this->serializer->serialize($product, 'json');
+                $response = new Response($json, 200, [], true);
+
+                return $response;
+            }
         });
 
         return $productCache;

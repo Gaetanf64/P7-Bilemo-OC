@@ -24,6 +24,7 @@
         "symfony/runtime": "5.4.*",
         "symfony/security-bundle": "5.4.*",
         "symfony/yaml": "5.4.*",
+        "willdurand/hateoas-bundle": "^2.4",
         "zircote/swagger-php": "^4.2"
     },
     "require-dev": {

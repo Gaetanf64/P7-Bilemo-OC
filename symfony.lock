@@ -229,6 +229,9 @@
     "symfony/event-dispatcher-contracts": {
         "version": "v2.5.0"
     },
+    "symfony/expression-language": {
+        "version": "v5.4.7"
+    },
     "symfony/filesystem": {
         "version": "v5.4.6"
     },
@@ -390,6 +393,21 @@
     },
     "twig/twig": {
         "version": "v3.3.10"
+    },
+    "willdurand/hateoas": {
+        "version": "3.8.0"
+    },
+    "willdurand/hateoas-bundle": {
+        "version": "2.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "2.0",
+            "ref": "34df072c6edaa61ae19afb2f3a239f272fecab87"
+        },
+        "files": [
+            "./config/packages/bazinga_hateoas.yaml"
+        ]
     },
     "willdurand/jsonp-callback-validator": {
         "version": "v2.0.0"

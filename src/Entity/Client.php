@@ -10,9 +10,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use OpenApi\Annotations as OA;
 
+
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
+ * 
  * @OA\Schema()
+ * 
  */
 class Client implements UserInterface, PasswordAuthenticatedUserInterface
 {

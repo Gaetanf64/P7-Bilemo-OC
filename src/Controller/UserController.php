@@ -132,15 +132,20 @@ class UserController extends AbstractController
             $idClient = $this->getUser()->getId();
 
             $user = $userRepository->findOneById($id);
-            $userClient = $user->getClient()->getId();
 
-            if ($userClient === $idClient) {
-                $json = $this->serializer->serialize($user, 'json');
-                $response = new Response($json, 200, [], true);
-
-                return $response;
+            if ($user == null) {
+                throw new HttpException(404, "Not found");
             } else {
-                throw new HttpException(403, "You cannot access this user from another client");
+                $userClient = $user->getClient()->getId();
+
+                if ($userClient === $idClient) {
+                    $json = $this->serializer->serialize($user, 'json');
+                    $response = new Response($json, 200, [], true);
+
+                    return $response;
+                } else {
+                    throw new HttpException(403, "You cannot access this user from another client");
+                }
             }
         });
 
@@ -244,15 +249,21 @@ class UserController extends AbstractController
         $idClient = $this->getUser()->getId();
 
         $user = $userRepository->find($id);
-        $userClient = $user->getClient()->getId();
 
-        if ($userClient === $idClient) {
-            $manager->remove($user);
-            $manager->flush();
 
-            return new Response("User deleted", 204);
+        if ($user == null) {
+            throw new HttpException(404, "Not found");
         } else {
-            throw new HttpException(403, "You cannot access this user from another client");
+            $userClient = $user->getClient()->getId();
+
+            if ($userClient === $idClient) {
+                $manager->remove($user);
+                $manager->flush();
+
+                return new Response("User deleted", 204);
+            } else {
+                throw new HttpException(403, "You cannot access this user from another client");
+            }
         }
     }
 }
