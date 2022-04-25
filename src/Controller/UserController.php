@@ -269,7 +269,7 @@ class UserController extends AbstractController
                 $manager->remove($user);
                 $manager->flush();
 
-                return new Response("User deleted", 204);
+                return new Response("User deleted");
             } else {
                 throw new HttpException(403, "You cannot access this user from another client");
             }
