@@ -75,11 +75,13 @@ class UserController extends AbstractController
             $item->expiresAfter(3600);
             $item->tag('user');
 
+            //On recupère l'ID du client
             $client = $this->getUser();
             $idClient = $client->getId();
 
             $users = $userRepository->findByClient($idClient);
 
+            //Mise en place de la pagination
             $usersPaginator = $paginator->paginate($users, $page, 2);
 
             $json = $this->serializer->serialize($usersPaginator, 'json');
@@ -129,15 +131,17 @@ class UserController extends AbstractController
         $userCache = $cache->get("user" . $id, function (ItemInterface $item) use ($id, $userRepository) {
             $item->expiresAfter(3600);
 
+            //On recupère l'ID du client
             $idClient = $this->getUser()->getId();
 
             $user = $userRepository->findOneById($id);
 
+            //si user n'existe pas
             if ($user == null) {
                 throw new HttpException(404, "Not found");
             } else {
                 $userClient = $user->getClient()->getId();
-
+                //si le user appartient au bon client
                 if ($userClient === $idClient) {
                     $json = $this->serializer->serialize($user, 'json');
                     $response = new Response($json, 200, [], true);
@@ -191,10 +195,12 @@ class UserController extends AbstractController
      */
     public function add(Request $request, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager): Response
     {
+        //On récupère le contenu 
         $json = $request->getContent();
 
         $user = $this->serializer->deserialize($json, User::class, 'json');
 
+        //On encode le mot de passe
         $password = $encoder->encodePassword($user, $user->getPassword());
 
         $user->setPassword($password)
@@ -246,17 +252,20 @@ class UserController extends AbstractController
      */
     public function delete($id, UserRepository $userRepository, EntityManagerInterface $manager)
     {
+        //On récupère l'ID du client
         $idClient = $this->getUser()->getId();
 
         $user = $userRepository->find($id);
 
-
+        //Si user n'existe pas
         if ($user == null) {
             throw new HttpException(404, "Not found");
         } else {
             $userClient = $user->getClient()->getId();
 
+            //si user appartient au bon client
             if ($userClient === $idClient) {
+                //On supprime le user
                 $manager->remove($user);
                 $manager->flush();
 

@@ -74,6 +74,7 @@ class ProductController extends AbstractController
 
             $products = $productRepository->findAll();
 
+            //Mise en place de la pagination
             $productsPaginator = $paginator->paginate($products, $page, 6);
 
             $json = $this->serializer->serialize($productsPaginator, 'json');
@@ -124,6 +125,7 @@ class ProductController extends AbstractController
 
             $product = $productRepository->findOneById($id);
 
+            //Si produit n'existe pas
             if ($product == null) {
                 throw new HttpException(404, "Not found");
             } else {
