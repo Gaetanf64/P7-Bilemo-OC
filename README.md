@@ -1,4 +1,4 @@
-# Projet 7 OpenClassRoom - Développeur d'application PHP/Symfony
+# Projet 7 OpenClassRooms - Développeur d'application PHP/Symfony
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a15a65c3c4214fdfb0ae3cb298e3dd87)](https://www.codacy.com/gh/Gaetanf64/P7-Bilemo-OC/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Gaetanf64/P7-Bilemo-OC&amp;utm_campaign=Badge_Grade)
 
@@ -63,7 +63,7 @@ openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
 
 Une PASSPHRASE est demandée dans .env, veuillez la renseigner:
 ```
-JWT_PASSPHRASE=0b878c0eb5d40d613bec8fc614a2c12e
+JWT_PASSPHRASE=votrePassPhrase
 ```
 
 * Créer la base de données si elle n'existe pas déjà en entrant cette commande à la racine du projet : 
